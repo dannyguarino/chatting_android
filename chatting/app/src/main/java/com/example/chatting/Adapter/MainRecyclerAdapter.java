@@ -115,6 +115,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void initLayoutChat(ViewHolderChat holder, int pos) {
+        User user = items.get(pos).getChat();
+        holder.tv_name.setText(user.getName());
     }
 
 
@@ -147,9 +149,15 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class ViewHolderChat extends RecyclerView.ViewHolder {
 
+        TextView tv_name;
         public ViewHolderChat(View itemView) {
             super(itemView);
 
+            getView(itemView);
+        }
+
+        public void getView(View view){
+            tv_name = view.findViewById(R.id.tv_name);
         }
     }
 

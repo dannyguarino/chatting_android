@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setView(){
 
-       loadDataChats();
+        loadData();
+//        loadDataChats();
 //        loadData();
         mainRecyclerAdapter = new MainRecyclerAdapter(itemMains);
         rc_main.setLayoutManager(new LinearLayoutManager(this));
@@ -108,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void loadData(){
         itemMains.add(new ItemMain(onlines, ItemMain.ItemType.ONLINE_ITEM));
-        for (int i = 0; i < chats.size(); i++){
-            itemMains.add(new ItemMain(chats.get(i), ItemMain.ItemType.CHAT_ITEM));
-        }
+//        for (int i = 0; i < chats.size(); i++){
+//            itemMains.add(new ItemMain(chats.get(i), ItemMain.ItemType.CHAT_ITEM));
+//        }
     }
 
     public void loadDataChats(){
@@ -138,9 +139,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateDataOnline(List<User> users) {
-        loadData();
-        List<ItemMain> items = new ArrayList<ItemMain>(itemMains);
-        itemMains.clear();
+//        itemMains.clear();
+        List<ItemMain> items = new ArrayList<ItemMain>();
+        for (User user :users){
+            items.add(new ItemMain(user, ItemMain.ItemType.CHAT_ITEM));
+        }
         itemMains.addAll(items);
         mainRecyclerAdapter.notifyDataSetChanged();
     }
