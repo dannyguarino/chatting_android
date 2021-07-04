@@ -1,20 +1,21 @@
 {
   "project_info": {
-    "project_number": "54921929581",
-    "project_id": "chatting-5ccfc",
-    "storage_bucket": "chatting-5ccfc.appspot.com"
+    "project_number": "875294473256",
+    "firebase_url": "https://chatting-84632-default-rtdb.firebaseio.com",
+    "project_id": "chatting-84632",
+    "storage_bucket": "chatting-84632.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:54921929581:android:4b0bfec050e73ee8ad3064",
+        "mobilesdk_app_id": "1:875294473256:android:ae20b4301b23e070e4491d",
         "android_client_info": {
           "package_name": "com.example.chatting"
         }
       },
       "oauth_client": [
         {
-          "client_id": "54921929581-u13elrhec2pvnptauttqf1frbfamjsca.apps.googleusercontent.com",
+          "client_id": "875294473256-fjmauajp9i5hdf1fbvcrnhjajhq25pu5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.chatting",
@@ -22,20 +23,20 @@
           }
         },
         {
-          "client_id": "54921929581-lm4ivsirlrpcccacrg5jsnqag1tc31aa.apps.googleusercontent.com",
+          "client_id": "875294473256-61kf1d6a7vgt0toapk8mfo0s26aj905s.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDp4G545p_Ay2gIrQVuOr-xKc3ffQuQnNI"
+          "current_key": "AIzaSyBgwm81p31Ie84ukbWsEbTYyLSYUMrApyE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "54921929581-lm4ivsirlrpcccacrg5jsnqag1tc31aa.apps.googleusercontent.com",
+              "client_id": "875294473256-61kf1d6a7vgt0toapk8mfo0s26aj905s.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

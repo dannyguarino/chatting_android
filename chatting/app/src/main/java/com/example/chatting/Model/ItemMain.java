@@ -7,41 +7,39 @@ public class ItemMain {
         ONLINE_ITEM, CHAT_ITEM;
     }
 
-    private List<String> onlines;
-    private String chat;
+    private List<User> onlines;
+    private User chat;
     private ItemType type;
 
-    public ItemMain(String chat, ItemType type) {
+    public ItemMain(User chat, ItemType type) {
         this.chat = chat;
         this.type = type;
     }
 
-    public ItemMain(List<String> onlines, ItemType type) {
+    public ItemMain(List<User> onlines, ItemType type) {
         this.onlines = onlines;
         this.type = type;
     }
 
-
-
-    public ItemMain(List<String> onlines, String chat, ItemType type) {
+    public ItemMain(List<User> onlines, User chat, ItemType type) {
         this.onlines = onlines;
         this.chat = chat;
         this.type = type;
     }
 
-    public List<String> getOnlines() {
+    public List<User> getOnlines() {
         return onlines;
     }
 
-    public void setOnlines(List<String> onlines) {
+    public void setOnlines(List<User> onlines) {
         this.onlines = onlines;
     }
 
-    public String getChat() {
+    public User getChat() {
         return chat;
     }
 
-    public void setChat(String chat) {
+    public void setChat(User chat) {
         this.chat = chat;
     }
 

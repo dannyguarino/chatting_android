@@ -3,14 +3,23 @@ package com.example.chatting.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatting.Adapter.OnlineRecyclerAdapter;
+import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.ItemMain;
+import com.example.chatting.Model.User;
 import com.example.chatting.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -73,13 +82,39 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void initLayoutOnline(ViewHolderOnline holder, int pos) {
         ItemMain item = items.get(pos);
+        loadDataOnline(holder);
         holder.onlines = item.getOnlines();
         holder.setView(holder.itemView);
     }
 
+    public void loadDataOnline(ViewHolderOnline holder){
+        UserDAO.getInstance().gets().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                List<User> usersOnline= new ArrayList<User>();
+                for (DataSnapshot data: snapshot.getChildren()){
+                    User user = data.getValue(User.class);
+                    if (user.isState()) {
+                        usersOnline.add(user);
+                    }
+                }
+                updateDataOnline(holder, usersOnline);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void updateDataOnline(ViewHolderOnline holder, List<User> users) {
+        holder.onlines.clear();
+        holder.onlines.addAll(users);
+        holder.onlineRecyclerAdapter.notifyDataSetChanged();
+    }
+
     private void initLayoutChat(ViewHolderChat holder, int pos) {
-//        holder.tvLeft.setText(itemList.get(pos).getName());
-//        holder.tvRight.setText(itemList.get(pos).getName());
     }
 
 
@@ -88,7 +123,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         OnlineRecyclerAdapter onlineRecyclerAdapter;
 
-        List<String> onlines;
+        List<User> onlines;
 
         RecyclerView rc_online;
         public ViewHolderOnline(View itemView) {

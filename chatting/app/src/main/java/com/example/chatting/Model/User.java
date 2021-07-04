@@ -3,12 +3,12 @@ package com.example.chatting.Model;
 import com.example.chatting.Provider.DateProvider;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 
 public class User implements Serializable {
 
     private int id;
+    private String avatar;
+    private String name;
     private String email;
     private String password;
     private String timeOff;
@@ -19,6 +19,18 @@ public class User implements Serializable {
     }
 
     public User(String email, String password) {
+        this.avatar = "";
+        this.email = email;
+        this.password = password;
+        this.timeOff = DateProvider.getDateTimeNow();
+        this.createdDate = DateProvider.getDateTimeNow();
+        this.state = true;
+    }
+
+    public User(int id, String avatar, String name, String email, String password) {
+        this.id = id;
+        this.avatar = avatar;
+        this.name = name;
         this.email = email;
         this.password = password;
         this.timeOff = DateProvider.getDateTimeNow();
@@ -28,6 +40,7 @@ public class User implements Serializable {
 
     public User(int id, String email, String password) {
         this.id = id;
+        this.avatar = "";
         this.email = email;
         this.password = password;
         this.timeOff = DateProvider.getDateTimeNow();
@@ -35,13 +48,16 @@ public class User implements Serializable {
         this.state = true;
     }
 
-    public User(String email, String password, String timeOff, String createdDate, boolean state) {
+    public User(int id, String avatar, String email, String password) {
+        this.id = id;
+        this.avatar = avatar;
         this.email = email;
         this.password = password;
-        this.timeOff = timeOff;
-        this.createdDate = createdDate;
-        this.state = state;
+        this.timeOff = DateProvider.getDateTimeNow();
+        this.createdDate = DateProvider.getDateTimeNow();
+        this.state = true;
     }
+
 
     public int getId() {
         return id;
@@ -49,6 +65,22 @@ public class User implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

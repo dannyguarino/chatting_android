@@ -8,6 +8,8 @@ public class Message implements Serializable {
     private int userId;
     private int friendId;
     private String context;
+    private String time;
+    private String type;
     private boolean myself;
     private boolean state;
 
@@ -28,6 +30,33 @@ public class Message implements Serializable {
         this.context = context;
         this.myself = myself;
         this.state = state;
+    }
+
+    public Message(int id, int userId, int friendId, String context, String time, String type, boolean myself, boolean state) {
+        this.id = id;
+        this.userId = userId;
+        this.friendId = friendId;
+        this.context = context;
+        this.time = time;
+        this.type = type;
+        this.myself = myself;
+        this.state = state;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getId() {

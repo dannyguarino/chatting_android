@@ -65,14 +65,20 @@
 
    </LinearLayout>
 
-
-   <androidx.recyclerview.widget.RecyclerView
-       android:id="@+id/rc_main"
+   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+       android:id="@+id/swipe_main"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_marginLeft="@dimen/padding_default"
-       android:layout_marginRight="@dimen/padding_default"
-       android:layout_weight="1"/>
+       android:layout_height="match_parent">
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rc_main"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="@dimen/padding_default"
+          android:layout_marginRight="@dimen/padding_default"
+          android:layout_weight="1"/>
+
+   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
    <com.google.android.material.bottomnavigation.BottomNavigationView
        android:id="@+id/bottom_nav"
