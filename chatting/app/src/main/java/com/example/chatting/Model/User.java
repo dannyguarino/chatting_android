@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private int id;
+    private String id;
     private String avatar;
     private String name;
     private String email;
@@ -27,8 +27,7 @@ public class User implements Serializable {
         this.state = true;
     }
 
-    public User(int id, String avatar, String name, String email, String password) {
-        this.id = id;
+    public User(String avatar, String name, String email, String password) {
         this.avatar = avatar;
         this.name = name;
         this.email = email;
@@ -38,32 +37,12 @@ public class User implements Serializable {
         this.state = true;
     }
 
-    public User(int id, String email, String password) {
-        this.id = id;
-        this.avatar = "";
-        this.email = email;
-        this.password = password;
-        this.timeOff = DateProvider.getDateTimeNow();
-        this.createdDate = DateProvider.getDateTimeNow();
-        this.state = true;
-    }
 
-    public User(int id, String avatar, String email, String password) {
-        this.id = id;
-        this.avatar = avatar;
-        this.email = email;
-        this.password = password;
-        this.timeOff = DateProvider.getDateTimeNow();
-        this.createdDate = DateProvider.getDateTimeNow();
-        this.state = true;
-    }
-
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

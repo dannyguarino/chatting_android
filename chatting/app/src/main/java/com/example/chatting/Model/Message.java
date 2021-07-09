@@ -1,14 +1,16 @@
 package com.example.chatting.Model;
 
+import com.example.chatting.Provider.DateProvider;
+
 import java.io.Serializable;
 
 public class Message implements Serializable {
 
-    private int id;
-    private int userId;
-    private int friendId;
+    private String id;
+    private String userId;
+    private String friendId;
     private String context;
-    private String time;
+    private long time;
     private String type;
     private boolean myself;
     private boolean state;
@@ -16,23 +18,27 @@ public class Message implements Serializable {
     public Message() {
     }
 
-    public Message(int userId, int friendId, String context, boolean myself) {
+    public Message(String userId, String friendId, String context, boolean myself) {
         this.userId = userId;
         this.friendId = friendId;
         this.context = context;
         this.myself = myself;
+        this.time = DateProvider.getTime();
+        this.type = "message";
         this.state = true;
     }
 
-    public Message(int userId, int friendId, String context, boolean myself, boolean state) {
+    public Message(String userId, String friendId, String context, String type, boolean myself) {
         this.userId = userId;
         this.friendId = friendId;
         this.context = context;
+        this.type = type;
         this.myself = myself;
-        this.state = state;
+        this.time = DateProvider.getTime();
+        this.state = true;
     }
 
-    public Message(int id, int userId, int friendId, String context, String time, String type, boolean myself, boolean state) {
+    public Message(String id, String userId, String friendId, String context, long time, String type, boolean myself, boolean state) {
         this.id = id;
         this.userId = userId;
         this.friendId = friendId;
@@ -43,11 +49,11 @@ public class Message implements Serializable {
         this.state = state;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -59,27 +65,27 @@ public class Message implements Serializable {
         this.type = type;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public int getFriendId() {
+    public String getFriendId() {
         return friendId;
     }
 
-    public void setFriendId(int friendId) {
+    public void setFriendId(String friendId) {
         this.friendId = friendId;
     }
 

@@ -7,20 +7,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.chatting.Adapter.MainRecyclerAdapter;
 import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.ItemMain;
 import com.example.chatting.Model.User;
+import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -30,11 +33,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     List<ItemMain> itemMains;
     MainRecyclerAdapter mainRecyclerAdapter;
 
+    User user;
+
     RecyclerView rc_main;
     SwipeRefreshLayout swipe_main;
+    BottomNavigationView bottom_nav;
+    Intent intent;
 
-    String email;
+    String name;
     boolean isLoading = false;
+
+    public static String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void getModel(){
 
+        user = (User)SharedPreferenceProvider.getInstance(this).get("user");
         onlines = new ArrayList<User>();
         chats = new ArrayList<User>();
         itemMains = new ArrayList<ItemMain>();
@@ -62,21 +72,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void getView(){
         rc_main = findViewById(R.id.rc_main);
         swipe_main = findViewById(R.id.swipe_main);
+        bottom_nav = findViewById(R.id.bottom_nav);
     }
 
     public void setView(){
 
+        bottom_nav.setSelectedItemId(R.id.chats);
+
         loadData();
-//        loadDataChats();
+        loadDataChats();
 //        loadData();
         mainRecyclerAdapter = new MainRecyclerAdapter(itemMains);
         rc_main.setLayoutManager(new LinearLayoutManager(this));
         rc_main.setItemAnimator(new DefaultItemAnimator());
         rc_main.setAdapter(mainRecyclerAdapter);
-
-//        for (int i = 2; i < 20; i++){
+//
+//        for (int i = 0; i < 80; i++){
 //            String avatar = "https://scontent-sin6-2.xx.fbcdn.net/v/t1.6435-1/p160x160/69910467_1207902709417404_9121282489589956608_n.jpg?_nc_cat=105&ccb=1-3&_nc_sid=7206a8&_nc_ohc=wKK0HteI64oAX9LBpSA&_nc_ht=scontent-sin6-2.xx&tp=6&oh=e03ba07c49fa741f733584adcf77fb5c&oe=60E5E641";
-//            User user = new User(i, avatar, "An Van " + i, "antran2509" + i, "123456789");
+//            User user = new User(avatar, "An Van " + i, "tranan250" + i + "@gmail.com", "123456789");
 //            UserDAO.getInstance().add(user);
 //        }
 
@@ -101,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
+
+        bottom_nav.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
     public void onClick(View view){
@@ -116,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void loadDataChats(){
         swipe_main.setRefreshing(true);
-        UserDAO.getInstance().get(email).addValueEventListener(new ValueEventListener() {
+        UserDAO.getInstance().get(name, 10).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 List<User> usersChat= new ArrayList<User>();
@@ -124,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     User user = data.getValue(User.class);
                     usersChat.add(user);
                     chats.add(user);
-                    email = user.getEmail();
+                    name = user.getName();
                 }
                 updateDataOnline(usersChat);
                 isLoading = false;
@@ -147,5 +162,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         itemMains.addAll(items);
         mainRecyclerAdapter.notifyDataSetChanged();
     }
+
+    BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.chats:
+                    return false;
+                case R.id.people:
+                    intent = new Intent(getApplicationContext(), PeopleActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    return true;
+            }
+            return false;
+        }
+    };
 
 }

@@ -14,6 +14,7 @@ public class DateProvider {
     public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     public static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    public static DateFormat fullTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     //Convert yyyy-MM-dd to dd/MM/yyyy
     public static String convertDateSqliteToPerson(String date){
@@ -38,6 +39,11 @@ public class DateProvider {
     public static String getDateTimeNow(){
         Calendar cal = Calendar.getInstance();
         return DateProvider.datetimeFormat.format(cal.getTime());
+    }
+
+    public static long getTime(){
+        Calendar cal = Calendar.getInstance();
+        return cal.getTime().getTime();
     }
 
     //Convert yyyy-MM-dd HH:mm to HH:mm dd/MM/yyyy

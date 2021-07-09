@@ -43,6 +43,7 @@ public class ImageConvert {
     }
 
     public static String BitMapToString(Bitmap bitmap){
+        bitmap = ImageResizer.reduceBitmapSize(bitmap, ImageResizer.MAX_SIZE);
         ByteArrayOutputStream baos=new  ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
         byte [] b=baos.toByteArray();

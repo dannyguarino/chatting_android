@@ -3,14 +3,12 @@ package com.example.chatting.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.chatting.Adapter.OnlineRecyclerAdapter;
 import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.ItemMain;
 import com.example.chatting.Model.User;

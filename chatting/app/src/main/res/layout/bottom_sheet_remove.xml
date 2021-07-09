@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btnSheetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_primary"
+    android:paddingTop="@dimen/padding_default"
+    android:paddingBottom="@dimen/padding_default"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/padding_default"
+        android:paddingLeft="@dimen/padding_default"
+        android:paddingBottom="@dimen/padding_default"
+        android:text="Bạn muốn xóa tin nhắn này cho ai?"/>
+
+  <Button
+      android:id="@+id/btn_unsend"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Thu hồi"
+      android:gravity="left|center_vertical"
+      android:drawableRight="@drawable/ic_baseline_delete_24"
+      android:textAllCaps="false"
+      android:textSize="18sp"
+      android:textColor="@color/black"
+      android:background="@color/background_primary"
+      android:paddingLeft="@dimen/padding_default"
+      android:paddingRight="@dimen/padding_default"
+      android:textFontWeight="500"/>
+
+    <Button
+        android:id="@+id/btn_remove_for_you"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Xóa tin nhắn cho bạn"
+        android:gravity="left|center_vertical"
+        android:drawableRight="@drawable/ic_baseline_delete_24"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:background="@color/background_primary"
+        android:paddingLeft="@dimen/padding_default"
+        android:paddingRight="@dimen/padding_default"
+        android:textFontWeight="500"/>
+
+</LinearLayout>
