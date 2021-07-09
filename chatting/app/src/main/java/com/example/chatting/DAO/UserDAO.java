@@ -46,11 +46,12 @@ public class UserDAO {
         users = new ArrayList<User>();
     }
 
-    public Task<Void> add(User user){
+    public String add(User user){
 //        return databaseReference.push().setValue(user);
         String userId = databaseReference.push().getKey();
         user.setId(userId);
-        return databaseReference.child(user.getId()).setValue(user);
+        databaseReference.child(user.getId()).setValue(user);
+        return userId;
     }
 
     public Query get(String name, int limit){
@@ -64,19 +65,8 @@ public class UserDAO {
         return databaseReference.orderByChild("id").equalTo(id).limitToFirst(1);
     }
 
-    public User getByEmail(String email){
-        getUserData(new FirebaseCallBack() {
-            @Override
-            public void onCallBack(List<User> mUsers) {
-                users = mUsers;
-                System.out.println("User " + users.get(0).getEmail() );
-            }
-        }, email);
-//        databaseReference.orderByChild("email").equalTo(email).addValueEventListener(valueEventListener);
-        if (users.size() > 0){
-            return users.get(0);
-        }
-        return null;
+    public Query getByEmail(String email){
+        return databaseReference.orderByChild("email").equalTo(email).limitToFirst(1);
     }
 
     public Query gets(){

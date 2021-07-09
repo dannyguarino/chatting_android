@@ -38,6 +38,7 @@
       </androidx.cardview.widget.CardView>
 
       <TextView
+          android:id="@+id/tv_name"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="Nhắn tin"

@@ -5,11 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatting.DAO.FriendDAO;
 import com.example.chatting.DAO.UserDAO;
+import com.example.chatting.Model.Friend;
 import com.example.chatting.Model.ItemMain;
 import com.example.chatting.Model.User;
 import com.example.chatting.R;
@@ -26,9 +29,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_CHAT = 2;
 
     private List<ItemMain> items;
+    User user;
     // Constructor of the class
-    public MainRecyclerAdapter(List<ItemMain> items) {
+    public MainRecyclerAdapter(List<ItemMain> items, User user) {
         this.items = items;
+        this.user = user;
     }
 
     // get the size of the list
@@ -85,25 +90,51 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setView(holder.itemView);
     }
 
-    public void loadDataOnline(ViewHolderOnline holder){
-        UserDAO.getInstance().gets().addValueEventListener(new ValueEventListener() {
+    public void loadDataOnline(ViewHolderOnline holder) {
+        List<User> usersOnline = new ArrayList<User>();
+        FriendDAO.getInstance().getFriendData(new FriendDAO.FirebaseCallBack() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                List<User> usersOnline= new ArrayList<User>();
-                for (DataSnapshot data: snapshot.getChildren()){
-                    User user = data.getValue(User.class);
-                    if (user.isState()) {
-                        usersOnline.add(user);
+            public void onCallBack(List<Friend> friends) {
+                for (Friend friend : friends) {
+                    if (friend.isState()) {
+                        UserDAO.getInstance().get(friend.getFriendId()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot data : snapshot.getChildren()) {
+                                    User mUser = data.getValue(User.class);
+                                    if (mUser.isState() && !user.getId().equals(mUser.getId())) {
+                                        usersOnline.add(mUser);
+                                    }
+                                }
+                                UserDAO.getInstance().get(friend.getUserId()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                        List<User> usersOnline = new ArrayList<User>();
+                                        for (DataSnapshot data : snapshot.getChildren()) {
+                                            User mUser = data.getValue(User.class);
+                                            if (mUser.isState() && !user.getId().equals(mUser.getId())) {
+                                                usersOnline.add(mUser);
+                                            }
+                                        }
+                                        updateDataOnline(holder, usersOnline);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
                 }
-                updateDataOnline(holder, usersOnline);
             }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-
-            }
-        });
+        }, user);
     }
 
     public void updateDataOnline(ViewHolderOnline holder, List<User> users) {

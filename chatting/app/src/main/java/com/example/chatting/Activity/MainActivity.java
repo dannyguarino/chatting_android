@@ -11,11 +11,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.chatting.Adapter.MainRecyclerAdapter;
 import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.ItemMain;
 import com.example.chatting.Model.User;
+import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SwipeRefreshLayout swipe_main;
     BottomNavigationView bottom_nav;
     Intent intent;
+    ImageView img_avatar;
+    TextView tv_name;
 
     String name;
     boolean isLoading = false;
@@ -73,16 +78,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rc_main = findViewById(R.id.rc_main);
         swipe_main = findViewById(R.id.swipe_main);
         bottom_nav = findViewById(R.id.bottom_nav);
+        img_avatar = findViewById(R.id.img_avatar);
+        tv_name = findViewById(R.id.tv_name);
     }
 
     public void setView(){
 
         bottom_nav.setSelectedItemId(R.id.chats);
+        ImageConvert.setUrlToImageView(img_avatar, user.getAvatar());
+        tv_name.setText(user.getName());
 
         loadData();
         loadDataChats();
 //        loadData();
-        mainRecyclerAdapter = new MainRecyclerAdapter(itemMains);
+        mainRecyclerAdapter = new MainRecyclerAdapter(itemMains, user);
         rc_main.setLayoutManager(new LinearLayoutManager(this));
         rc_main.setItemAnimator(new DefaultItemAnimator());
         rc_main.setAdapter(mainRecyclerAdapter);
@@ -116,10 +125,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         bottom_nav.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        img_avatar.setOnClickListener(this);
     }
 
     public void onClick(View view){
-
+        switch (view.getId()){
+            case R.id.img_avatar:
+                intent = new Intent(getApplicationContext(), AccountActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     public void loadData(){

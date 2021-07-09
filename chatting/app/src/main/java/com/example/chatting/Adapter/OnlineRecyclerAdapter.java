@@ -1,6 +1,7 @@
 package com.example.chatting.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatting.Activity.MessageActivity;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.R;
@@ -50,6 +52,14 @@ public class OnlineRecyclerAdapter extends RecyclerView.Adapter<OnlineRecyclerAd
         User user = onlines.get(position);
         holder.tv_name.setText(user.getName());
         ImageConvert.setUrlToImageView(holder.img_avatar, user.getAvatar());
+        holder.img_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.itemView.getContext(), MessageActivity.class);
+                intent.putExtra("friend", user);
+                holder.itemView.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

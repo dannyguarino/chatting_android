@@ -25,7 +25,8 @@
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chatting">
-        <activity android:name=".Activity.MessageActivity"></activity>
+        <activity android:name=".Activity.AccountActivity"></activity>
+        <activity android:name=".Activity.MessageActivity" />
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

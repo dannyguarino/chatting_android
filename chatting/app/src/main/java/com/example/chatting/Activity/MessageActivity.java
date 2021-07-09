@@ -150,7 +150,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         intent.setType("image/*");
 //**The following line is the important one!
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURES);
+        Intent chooserIntent = Intent.createChooser(intent, "Chọn ảnh");
+        startActivityForResult(chooserIntent, SELECT_PICTURES);
     }
 
     @Override
