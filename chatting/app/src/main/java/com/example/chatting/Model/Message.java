@@ -18,6 +18,17 @@ public class Message implements Serializable {
     public Message() {
     }
 
+    public Message(Message message) {
+        this.id = message.id;
+        this.userId = message.getUserId();
+        this.friendId = message.getFriendId();
+        this.context = message.getContext();
+        this.time = message.getTime();
+        this.type = message.getType();
+        this.myself = message.isMyself();
+        this.state = message.isState();
+    }
+
     public Message(String userId, String friendId, String context, boolean myself) {
         this.userId = userId;
         this.friendId = friendId;
@@ -28,14 +39,14 @@ public class Message implements Serializable {
         this.state = true;
     }
 
-    public Message(String userId, String friendId, String context, String type, boolean myself) {
+    public Message(String userId, String friendId, String context, String type, boolean myself, boolean state) {
         this.userId = userId;
         this.friendId = friendId;
         this.context = context;
         this.type = type;
         this.myself = myself;
         this.time = DateProvider.getTime();
-        this.state = true;
+        this.state = state;
     }
 
     public Message(String id, String userId, String friendId, String context, long time, String type, boolean myself, boolean state) {

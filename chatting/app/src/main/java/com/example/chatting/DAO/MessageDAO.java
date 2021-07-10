@@ -14,6 +14,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MessageDAO {
@@ -48,6 +49,27 @@ public class MessageDAO {
 
     public Query gets(User user, User friend){
         return databaseReference.orderByChild("userId").equalTo(user.getId());
+    }
+
+    public Query gets(User user){
+        return databaseReference.orderByChild("userId").equalTo(user.getId());
+    }
+
+    public Query getLastMessage(User user){
+        return databaseReference.orderByChild("userId").equalTo(user.getId()).limitToLast(1);
+    }
+
+    public Task<Void> update(Message message){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", message.getId());
+        hashMap.put("userId", message.getUserId());
+        hashMap.put("friendId", message.getFriendId());
+        hashMap.put("context", message.getContext());
+        hashMap.put("time", message.getTime());
+        hashMap.put("type", message.getType());
+        hashMap.put("myself", message.isMyself());
+        hashMap.put("state", message.isState());
+        return databaseReference.child(message.getId()).updateChildren(hashMap);
     }
 
     public Task<Void> remove(Message message){

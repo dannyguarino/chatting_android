@@ -9,11 +9,13 @@ public class ItemMain {
 
     private List<User> onlines;
     private User chat;
+    private Message message;
     private ItemType type;
 
-    public ItemMain(User chat, ItemType type) {
+    public ItemMain(User chat, Message message, ItemType type) {
         this.chat = chat;
         this.type = type;
+        this.message = message;
     }
 
     public ItemMain(List<User> onlines, ItemType type) {
@@ -25,6 +27,14 @@ public class ItemMain {
         this.onlines = onlines;
         this.chat = chat;
         this.type = type;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public List<User> getOnlines() {

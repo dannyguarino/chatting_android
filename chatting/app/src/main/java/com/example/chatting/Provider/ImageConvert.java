@@ -5,14 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatting.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class ImageConvert {
 
@@ -60,6 +66,21 @@ public class ImageConvert {
             e.getMessage();
             return null;
         }
+    }
+
+    public static Bitmap getBitmapFromURL(Context context, String src) {
+        try {
+            Bitmap bitmap = Glide
+                    .with(context)
+                    .asBitmap()
+                    .load(src)
+                    .submit()
+                    .get();
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void setUrlToImageView(ImageView img, String url){
