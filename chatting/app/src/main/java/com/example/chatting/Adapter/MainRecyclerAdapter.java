@@ -1,8 +1,11 @@
 package com.example.chatting.Adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,17 +13,22 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatting.Activity.MessageActivity;
 import com.example.chatting.DAO.FriendDAO;
 import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.Friend;
 import com.example.chatting.Model.ItemMain;
+import com.example.chatting.Model.Message;
 import com.example.chatting.Model.User;
+import com.example.chatting.Provider.DateProvider;
+import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -34,6 +42,10 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public MainRecyclerAdapter(List<ItemMain> items, User user) {
         this.items = items;
         this.user = user;
+    }
+
+    public void setItems(List<ItemMain> items){
+        this.items = items;
     }
 
     // get the size of the list
@@ -144,8 +156,33 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void initLayoutChat(ViewHolderChat holder, int pos) {
-        User user = items.get(pos).getChat();
-        holder.tv_name.setText(user.getName());
+        User friend = items.get(pos).getChat();
+        Message message = items.get(pos).getMessage();
+        holder.tv_name.setText(friend.getName());
+        ImageConvert.setUrlToImageView(holder.img_avatar, friend.getAvatar());
+        String context = message.getContext();
+        if (message.getType().equals("image"))
+            context = "Tin nhắn hình ảnh";
+        if (message.isMyself())
+            context = "Bạn: " + context;
+        holder.tv_context.setText(context);
+        Date datetime = new Date(message.getTime());
+        String time = DateProvider.datetimeFormat.format(datetime);
+        String now = DateProvider.getDateTimeNow();
+        if (time.split(" ")[0].equals(now.split(" ")[0])){
+            holder.tv_time.setText(time.split(" ")[1]);
+        }else {
+            holder.tv_time.setText(DateProvider.convertDateTimeSqliteToPerson(time));
+        }
+
+        holder.layout_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.itemView.getContext(), MessageActivity.class);
+                intent.putExtra("friend", friend);
+                holder.itemView.getContext().startActivity(intent);
+            }
+        });
     }
 
 
@@ -177,8 +214,9 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class ViewHolderChat extends RecyclerView.ViewHolder {
-
-        TextView tv_name;
+        LinearLayout layout_chat;
+        ImageView img_avatar;
+        TextView tv_name, tv_context, tv_time;
         public ViewHolderChat(View itemView) {
             super(itemView);
 
@@ -186,7 +224,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void getView(View view){
+            layout_chat = view.findViewById(R.id.layout_chat);
             tv_name = view.findViewById(R.id.tv_name);
+            img_avatar = view.findViewById(R.id.img_avatar);
+            tv_context = view.findViewById(R.id.tv_context);
+            tv_time = view.findViewById(R.id.tv_time);
         }
     }
 
