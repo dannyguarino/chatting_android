@@ -2,12 +2,16 @@ package com.example.chatting.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,7 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chatting.Adapter.MessageRecyclerAdapter;
+import com.example.chatting.Application.App;
 import com.example.chatting.DAO.MessageDAO;
+import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.Message;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.ImageConvert;
@@ -32,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MessageActivity extends AppCompatActivity implements View.OnClickListener{
@@ -39,7 +46,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     private int SELECT_PICTURES = 123;
 
     List<Message> messages;
-    User user, friend;
+    public static User user, friend;
     Intent intent;
 
     MessageRecyclerAdapter messageRecyclerAdapter;
@@ -60,6 +67,15 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         getView();
         setView();
         setOnClick();
+
+//        notificationManagerCompat = NotificationManagerCompat.from(this);
+//        getLastMessage();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        friend = null;
     }
 
     public void getModel(){
@@ -188,8 +204,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void addMessage(String context, String type){
-        Message message = new Message(user.getId(), friend.getId(), context, type, true);
-        Message messageFriend = new Message(friend.getId(), user.getId(), context, type, false);
+        Message message = new Message(user.getId(), friend.getId(), context, type, true, true);
+        Message messageFriend = new Message(friend.getId(), user.getId(), context, type, false, false);
         MessageDAO.getInstance().add(message);
         MessageDAO.getInstance().add(messageFriend);
         messages.add(message);
@@ -197,5 +213,4 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         txt_message.setText("");
         rc_message.getLayoutManager().scrollToPosition(messages.size() - 1);
     }
-
 }

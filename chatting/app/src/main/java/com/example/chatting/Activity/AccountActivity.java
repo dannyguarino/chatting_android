@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
+import com.example.chatting.Service.NotificationService;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -55,6 +56,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         switch (view.getId()){
             case R.id.btn_logout:
                 logout();
+                stopService(new Intent(getBaseContext(), NotificationService.class));
                 break;
         }
     }

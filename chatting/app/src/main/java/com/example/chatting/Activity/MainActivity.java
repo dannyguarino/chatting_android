@@ -2,11 +2,17 @@ package com.example.chatting.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.core.app.NotificationCompat;
+
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,24 +21,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chatting.Adapter.MainRecyclerAdapter;
+import com.example.chatting.Application.App;
+import com.example.chatting.DAO.MessageDAO;
 import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.ItemMain;
+import com.example.chatting.Model.Message;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
+import com.example.chatting.Service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    NotificationManagerCompat notificationManagerCompat;
+
     List<User> onlines;
     List<User> chats;
+    List<Message> lastMessages;
     List<ItemMain> itemMains;
     MainRecyclerAdapter mainRecyclerAdapter;
 
@@ -45,11 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView img_avatar;
     TextView tv_name;
 
-    String name;
-    boolean isLoading = false;
-
-    public static String email;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getView();
         setView();
         setOnClick();
+        //Start service notification of message
+        startService(new Intent(this, NotificationService.class));
     }
 
     @Override
@@ -72,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         onlines = new ArrayList<User>();
         chats = new ArrayList<User>();
         itemMains = new ArrayList<ItemMain>();
+        lastMessages = new ArrayList<Message>();
     }
 
     public void getView(){
@@ -88,41 +101,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageConvert.setUrlToImageView(img_avatar, user.getAvatar());
         tv_name.setText(user.getName());
 
-        loadData();
-        loadDataChats();
 //        loadData();
+
         mainRecyclerAdapter = new MainRecyclerAdapter(itemMains, user);
         rc_main.setLayoutManager(new LinearLayoutManager(this));
         rc_main.setItemAnimator(new DefaultItemAnimator());
         rc_main.setAdapter(mainRecyclerAdapter);
-//
-//        for (int i = 0; i < 80; i++){
-//            String avatar = "https://scontent-sin6-2.xx.fbcdn.net/v/t1.6435-1/p160x160/69910467_1207902709417404_9121282489589956608_n.jpg?_nc_cat=105&ccb=1-3&_nc_sid=7206a8&_nc_ohc=wKK0HteI64oAX9LBpSA&_nc_ht=scontent-sin6-2.xx&tp=6&oh=e03ba07c49fa741f733584adcf77fb5c&oe=60E5E641";
-//            User user = new User(avatar, "An Van " + i, "tranan250" + i + "@gmail.com", "123456789");
-//            UserDAO.getInstance().add(user);
-//        }
 
-//        UserDAO.getInstance().update("-MdlQs3pVz1SLJIqH-Zh", user);
-//        UserDAO.getInstance().remove("-MdlQs3pVz1SLJIqH-Zh");
+        loadDataChats();
     }
 
     public void setOnClick(){
-        rc_main.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rc_main.getLayoutManager();
-                int total = linearLayoutManager.getItemCount();
-                int lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-                if (total < lastVisible + 3){
-                    if (!isLoading){
-                        isLoading = true;
-                        loadDataChats();
-                    }
-
-                }
-            }
-        });
+//        rc_main.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rc_main.getLayoutManager();
+//                int total = linearLayoutManager.getItemCount();
+//                int lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+//                if (total < lastVisible + 3){
+//                    if (!isLoading){
+//                        isLoading = true;
+//                        loadDataChats();
+//                    }
+//
+//                }
+//            }
+//        });
 
         bottom_nav.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         img_avatar.setOnClickListener(this);
@@ -139,42 +144,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void loadData(){
         itemMains.add(new ItemMain(onlines, ItemMain.ItemType.ONLINE_ITEM));
-//        for (int i = 0; i < chats.size(); i++){
-//            itemMains.add(new ItemMain(chats.get(i), ItemMain.ItemType.CHAT_ITEM));
-//        }
     }
 
     public void loadDataChats(){
-        swipe_main.setRefreshing(true);
-        UserDAO.getInstance().get(name, 10).addValueEventListener(new ValueEventListener() {
+        MessageDAO.getInstance().gets(user).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                List<User> usersChat= new ArrayList<User>();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data: snapshot.getChildren()){
-                    User user = data.getValue(User.class);
-                    usersChat.add(user);
-                    chats.add(user);
-                    name = user.getName();
+                    Message message = data.getValue(Message.class);
+                    UserDAO.getInstance().get(message.getFriendId()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot data: snapshot.getChildren()) {
+                                User user = data.getValue(User.class);
+                                int position = getPosition(chats, user);
+                                if (position > -1) {
+                                    chats.remove(position);
+                                    lastMessages.remove(position);
+                                }
+                                chats.add(0, user);
+                                lastMessages.add(0, message);
+                            }
+                            updateDataOnline(chats, lastMessages);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
-                updateDataOnline(usersChat);
-                isLoading = false;
-                swipe_main.setRefreshing(false);
+
+//                Collections.reverse(chats);
+//                Collections.reverse(lastMessages);
+//                updateDataOnline(chats, lastMessages);
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                swipe_main.setRefreshing(false);
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
 
-    public void updateDataOnline(List<User> users) {
-//        itemMains.clear();
+    int getPosition(List<User> users, User user){
+        for (int i = 0; i < users.size(); i++){
+            if (users.get(i).getId().equals(user.getId()))
+                return i;
+        }
+        return -1;
+    }
+
+    public void updateDataOnline(List<User> users, List<Message> messages) {
+        itemMains.clear();
+        loadData();
         List<ItemMain> items = new ArrayList<ItemMain>();
-        for (User user :users){
-            items.add(new ItemMain(user, ItemMain.ItemType.CHAT_ITEM));
+        for (int i = 0; i < users.size(); i++){
+            items.add(new ItemMain(users.get(i), messages.get(i), ItemMain.ItemType.CHAT_ITEM));
         }
         itemMains.addAll(items);
+        mainRecyclerAdapter.setItems(itemMains);
         mainRecyclerAdapter.notifyDataSetChanged();
     }
 

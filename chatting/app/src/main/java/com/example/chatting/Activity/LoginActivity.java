@@ -113,9 +113,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
             showProgressDialog();
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
@@ -147,10 +144,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount acct = result.getSignInAccount();
             updateUI(true);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
+            System.out.println(acct.getDisplayName());
             UserDAO.getInstance().getByEmail(acct.getEmail()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    System.out.println(acct.getEmail());
                     User user = null;
                     for (DataSnapshot data: snapshot.getChildren()){
                         user = data.getValue(User.class);
