@@ -13,6 +13,7 @@ public class Message implements Serializable {
     private long time;
     private String type;
     private boolean myself;
+    private int status; // 1 - sent , 2 - received, 3 - seen
     private boolean state;
 
     public Message() {
@@ -26,6 +27,7 @@ public class Message implements Serializable {
         this.time = message.getTime();
         this.type = message.getType();
         this.myself = message.isMyself();
+        this.status = 1;
         this.state = message.isState();
     }
 
@@ -36,6 +38,7 @@ public class Message implements Serializable {
         this.myself = myself;
         this.time = DateProvider.getTime();
         this.type = "message";
+        this.status = 1;
         this.state = true;
     }
 
@@ -46,6 +49,7 @@ public class Message implements Serializable {
         this.type = type;
         this.myself = myself;
         this.time = DateProvider.getTime();
+        this.status = 1;
         this.state = state;
     }
 
@@ -57,6 +61,7 @@ public class Message implements Serializable {
         this.time = time;
         this.type = type;
         this.myself = myself;
+        this.status = 1;
         this.state = state;
     }
 
@@ -114,6 +119,14 @@ public class Message implements Serializable {
 
     public void setMyself(boolean myself) {
         this.myself = myself;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public boolean isState() {

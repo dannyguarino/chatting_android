@@ -20,7 +20,6 @@
         android:required="false" />
 
     <application
-
         android:name=".Application.App"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
@@ -28,7 +27,8 @@
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chatting">
-        <activity android:name=".Activity.AccountActivity"></activity>
+        <activity android:name=".Activity.SignUpActivity"></activity>
+        <activity android:name=".Activity.AccountActivity" />
         <activity android:name=".Activity.MessageActivity" />
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
@@ -46,7 +46,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".Service.NotificationService"></service>
+
+        <service android:name=".Service.NotificationService" />
     </application>
 
 </manifest>

@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chatting.DAO.UserDAO;
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private ProgressDialog mProgressDialog;
 
     SignInButton btn_sign_in;
+    Button btn_login, btn_sign_up;
+    EditText txt_email, txt_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public void getView(){
         btn_sign_in = findViewById(R.id.btn_sign_in);
+        btn_login = findViewById(R.id.btn_login);
+        btn_sign_up = findViewById(R.id.btn_sign_up);
+        txt_email = findViewById(R.id.txt_email);
+        txt_password = findViewById(R.id.txt_password);
     }
 
     public void setView(){
@@ -79,6 +87,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public void setOnClick(){
         btn_sign_in.setOnClickListener(this);
+        btn_login.setOnClickListener(this);
+        btn_sign_up.setOnClickListener(this);
     }
 
     public void onClick(View view){
@@ -86,8 +96,42 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             case R.id.btn_sign_in:
                 signIn();
                 break;
+            case R.id.btn_login:
+                login();
+                break;
+            case R.id.btn_sign_up:
+                Intent intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
+                break;
         }
     }
+
+    void login(){
+        UserDAO.getInstance().getByEmail(txt_email.getText().toString()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = null;
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                for (DataSnapshot data: snapshot.getChildren()){
+                    user = data.getValue(User.class);
+                    if (user.getPassword().equals(txt_password.getText().toString())) {
+                        SharedPreferenceProvider.getInstance(getApplicationContext()).set("user", user);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Mật khẩu không đúng", Toast.LENGTH_LONG).show();
+                    }
+                }
+                if (user == null)
+                    Toast.makeText(getApplicationContext(), "Email không hợp lệ", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     void configGoogleLogin(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -144,7 +188,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount acct = result.getSignInAccount();
             updateUI(true);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            System.out.println(acct.getDisplayName());
             UserDAO.getInstance().getByEmail(acct.getEmail()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {

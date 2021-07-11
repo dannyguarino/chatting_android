@@ -3,14 +3,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release {
-        storeFile file('/home/tranan/MEGA/Projects/chatting_android/chatting/keystore.jks')
-            storePassword '250920'
-            keyAlias 'key0'
-            keyPassword '250920'
-        }
-    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
