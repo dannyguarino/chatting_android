@@ -33,12 +33,14 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_online"
             android:layout_width="20dp"
             android:layout_height="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:cardElevation="0dp"
-            app:cardCornerRadius="1000dp">
+            app:cardCornerRadius="1000dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -51,6 +53,22 @@
                 android:background="@drawable/bg_boder_circle_white"/>
 
         </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_offline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="54m"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:textFontWeight="300"
+            android:background="@drawable/bg_tv_offline"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

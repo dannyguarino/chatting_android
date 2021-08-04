@@ -48,6 +48,7 @@
         </activity>
 
         <service android:name=".Service.NotificationService" />
+<!--        <service android:name=".Service.StatusUserService" />-->
     </application>
 
 </manifest>

@@ -14,17 +14,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatting.Activity.MessageActivity;
 import com.example.chatting.DAO.MessageDAO;
+import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.Message;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.DateProvider;
 import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -45,7 +50,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
         LinearLayout layout_message, layout_message_friend, layout_time,
                 layout_message_main;
         CardView card_message, card_message_friend;
-        ImageView img_message, img_message_friend;
+        ImageView img_message, img_message_friend, img_avatar, img_status;
         TextView tv_message, tv_message_friend, tv_time;
 
         public ViewHolder(View itemView) {
@@ -62,6 +67,8 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
             card_message_friend = view.findViewById(R.id.card_message_friend);
             img_message = view.findViewById(R.id.img_message);
             img_message_friend = view.findViewById(R.id.img_message_friend);
+            img_avatar = view.findViewById(R.id.img_avatar);
+            img_status = view.findViewById(R.id.img_status);
             tv_message = view.findViewById(R.id.tv_message);
             tv_message_friend = view.findViewById(R.id.tv_message_friend);
             tv_time = view.findViewById(R.id.tv_time);
@@ -88,10 +95,43 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
             holder.layout_message_friend.setVisibility(View.GONE);
             holder.layout_message.setVisibility(View.VISIBLE);
             holder.layout_message_main.setGravity(Gravity.RIGHT);
+            if (message.getStatus() == 0){
+                holder.img_status.setVisibility(View.VISIBLE);
+                holder.img_status.setImageResource(R.drawable.ic_baseline_unsent);
+            }else if (message.getStatus() == 1){
+                holder.img_status.setVisibility(View.VISIBLE);
+                holder.img_status.setImageResource(R.drawable.ic_baseline_sent);
+            }else if (message.getStatus() == 2){
+                holder.img_status.setVisibility(View.VISIBLE);
+                holder.img_status.setImageResource(R.drawable.ic_baseline_received);
+            }else{
+                if (message.getId().equals(messages.get(messages.size() - 1).getId())){
+                    holder.img_status.setVisibility(View.VISIBLE);
+                    holder.img_status.setImageResource(R.drawable.ic_baseline_seen);
+                }else{
+                    holder.img_status.setVisibility(View.INVISIBLE);
+                }
+            }
+            holder.img_avatar.setVisibility(View.GONE);
         }else {
             holder.layout_message_friend.setVisibility(View.VISIBLE);
             holder.layout_message.setVisibility(View.GONE);
             holder.layout_message_main.setGravity(Gravity.LEFT);
+            holder.img_status.setVisibility(View.GONE);
+//            UserDAO.getInstance().get(message.getFriendId()).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                    for (DataSnapshot data: snapshot.getChildren()){
+//                        User friend = data.getValue(User.class);
+//                        ImageConvert.setUrlToImageView(holder.img_avatar, friend.getAvatar());
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                }
+//            });
         }
 
         if (message.getType().equals("message")){

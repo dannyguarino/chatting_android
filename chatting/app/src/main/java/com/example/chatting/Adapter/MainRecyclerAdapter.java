@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -175,6 +177,35 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.tv_time.setText(DateProvider.convertDateTimeSqliteToPerson(time));
         }
 
+        if (friend.isState()){
+            holder.card_online.setVisibility(View.VISIBLE);
+            holder.tv_offline.setVisibility(View.GONE);
+        }else{
+            try {
+                Date dateNow = DateProvider.datetimeFormat.parse(now);
+                Date dateOff = DateProvider.datetimeFormat.parse(friend.getTimeOff());
+                long timeOff = (dateNow.getTime() - dateOff.getTime()) / (1 * 60 * 1000);
+                System.out.println(now + " " + friend.getTimeOff() + " " + dateNow.getTime() + " " + dateOff.getTime() + " " + timeOff);
+                if (timeOff > 0){
+                    holder.card_online.setVisibility(View.GONE);
+                    holder.tv_offline.setVisibility(View.VISIBLE);
+                    if (timeOff < 60){
+                        holder.tv_offline.setText(timeOff + "m");
+                    }else if (timeOff < 60 * 24){
+                        holder.tv_offline.setText(timeOff / (60) + "h");
+                    }else{
+                        holder.tv_offline.setText(timeOff / (24 * 60 ) + "d");
+                    }
+                }
+                else{
+                    holder.card_online.setVisibility(View.VISIBLE);
+                    holder.tv_offline.setVisibility(View.GONE);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         holder.layout_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,7 +247,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class ViewHolderChat extends RecyclerView.ViewHolder {
         LinearLayout layout_chat;
         ImageView img_avatar;
-        TextView tv_name, tv_context, tv_time;
+        TextView tv_name, tv_context, tv_time, tv_offline;
+        CardView card_online;
         public ViewHolderChat(View itemView) {
             super(itemView);
 
@@ -229,6 +261,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             img_avatar = view.findViewById(R.id.img_avatar);
             tv_context = view.findViewById(R.id.tv_context);
             tv_time = view.findViewById(R.id.tv_time);
+            tv_offline = view.findViewById(R.id.tv_offline);
+            card_online = view.findViewById(R.id.card_online);
         }
     }
 

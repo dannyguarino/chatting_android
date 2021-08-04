@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Model.User;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
@@ -55,6 +56,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view){
         switch (view.getId()){
             case R.id.btn_logout:
+                UserDAO.getInstance().offline(user);
                 logout();
                 stopService(new Intent(getBaseContext(), NotificationService.class));
                 break;

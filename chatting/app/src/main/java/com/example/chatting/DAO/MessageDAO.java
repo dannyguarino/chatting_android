@@ -68,6 +68,7 @@ public class MessageDAO {
         hashMap.put("time", message.getTime());
         hashMap.put("type", message.getType());
         hashMap.put("myself", message.isMyself());
+        hashMap.put("status", message.getStatus());
         hashMap.put("state", message.isState());
         return databaseReference.child(message.getId()).updateChildren(hashMap);
     }

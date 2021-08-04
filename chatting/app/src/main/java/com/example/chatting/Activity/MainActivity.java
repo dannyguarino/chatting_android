@@ -31,6 +31,7 @@ import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
 import com.example.chatting.Service.NotificationService;
+import com.example.chatting.Service.StatusUserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RecyclerView rc_main;
     SwipeRefreshLayout swipe_main;
     BottomNavigationView bottom_nav;
-    Intent intent;
+    Intent intent, intentService;
     ImageView img_avatar;
     TextView tv_name;
 
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setView();
         setOnClick();
         //Start service notification of message
-        startService(new Intent(this, NotificationService.class));
+        intentService = new Intent(this, NotificationService.class);
+        startService(intentService);
     }
 
     @Override
@@ -78,8 +80,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onBackPressed();
     }
 
-    public void getModel(){
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        stopService(intentService);
+    }
 
+    public void getModel(){
         user = (User)SharedPreferenceProvider.getInstance(this).get("user");
         onlines = new ArrayList<User>();
         chats = new ArrayList<User>();
@@ -174,10 +181,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }
-
-//                Collections.reverse(chats);
-//                Collections.reverse(lastMessages);
-//                updateDataOnline(chats, lastMessages);
             }
 
             @Override

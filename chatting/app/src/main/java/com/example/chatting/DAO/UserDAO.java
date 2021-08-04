@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.example.chatting.Activity.MainActivity;
 import com.example.chatting.Model.User;
+import com.example.chatting.Provider.DateProvider;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -77,7 +78,7 @@ public class UserDAO {
         return databaseReference.child(key).updateChildren(hashMap);
     }
 
-    public Task<Void> update(String key, User user){
+    public Task<Void> update(User user){
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("id", user.getId());
         hashMap.put("avatar", user.getAvatar());
@@ -87,7 +88,7 @@ public class UserDAO {
         hashMap.put("timeOff", user.getTimeOff());
         hashMap.put("createdDate", user.getCreatedDate());
         hashMap.put("state", user.isState());
-        return databaseReference.child(key).updateChildren(hashMap);
+        return databaseReference.child(user.getId()).updateChildren(hashMap);
     }
 
     public Task<Void> remove(String key){
@@ -134,4 +135,16 @@ public class UserDAO {
         void onCallBack(List<User> users);
     }
 
+
+    public void offline(User user){
+        user.setTimeOff(DateProvider.getDateTimeNow());
+        user.setState(false);
+        update(user);
+    }
+
+    public void online(User user){
+        user.setTimeOff(DateProvider.getDateTimeNow());
+        user.setState(true);
+        update(user);
+    }
 }

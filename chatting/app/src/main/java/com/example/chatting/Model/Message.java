@@ -6,6 +6,11 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
 
+    public static final int UNSENT = 0;
+    public static final int SENT = 1;
+    public static final int RECEIVED = 2;
+    public static final int SEEN = 3;
+
     private String id;
     private String userId;
     private String friendId;
@@ -13,23 +18,12 @@ public class Message implements Serializable {
     private long time;
     private String type;
     private boolean myself;
-    private int status; // 1 - sent , 2 - received, 3 - seen
+    private int status; //0 - unsent, 1 - sent , 2 - received, 3 - seen
     private boolean state;
 
     public Message() {
     }
 
-    public Message(Message message) {
-        this.id = message.id;
-        this.userId = message.getUserId();
-        this.friendId = message.getFriendId();
-        this.context = message.getContext();
-        this.time = message.getTime();
-        this.type = message.getType();
-        this.myself = message.isMyself();
-        this.status = 1;
-        this.state = message.isState();
-    }
 
     public Message(String userId, String friendId, String context, boolean myself) {
         this.userId = userId;
@@ -38,7 +32,7 @@ public class Message implements Serializable {
         this.myself = myself;
         this.time = DateProvider.getTime();
         this.type = "message";
-        this.status = 1;
+        this.status = SENT;
         this.state = true;
     }
 
@@ -49,19 +43,18 @@ public class Message implements Serializable {
         this.type = type;
         this.myself = myself;
         this.time = DateProvider.getTime();
-        this.status = 1;
+        this.status = SENT;
         this.state = state;
     }
 
-    public Message(String id, String userId, String friendId, String context, long time, String type, boolean myself, boolean state) {
-        this.id = id;
+    public Message(String userId, String friendId, String context, String type, boolean myself, int status, boolean state) {
         this.userId = userId;
         this.friendId = friendId;
         this.context = context;
-        this.time = time;
         this.type = type;
         this.myself = myself;
-        this.status = 1;
+        this.time = DateProvider.getTime();
+        this.status = status;
         this.state = state;
     }
 

@@ -31,7 +31,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class NotificationService extends Service {
 
@@ -46,9 +48,10 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         user = (User) SharedPreferenceProvider.getInstance(getApplicationContext()).get("user");
+        UserDAO.getInstance().online(user);
         notificationManagerCompat = NotificationManagerCompat.from(this);
         getLastMessage();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     void getLastMessage() {
@@ -62,9 +65,13 @@ public class NotificationService extends Service {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot data : snapshot.getChildren()) {
-                                    User user = data.getValue(User.class);
-                                    if (MessageActivity.friend == null || !MessageActivity.friend.getId().equals(user.getId()))
-                                        sendNotification(user, message);
+                                    User friend = data.getValue(User.class);
+                                    if (!MessageActivity.inMessage || !MessageActivity.friend.getId().equals(friend.getId())) {
+                                        sendNotification(friend, message);
+                                        update(user, friend, Message.RECEIVED);
+                                    } else if (MessageActivity.inMessage && MessageActivity.friend.getId().equals(friend.getId())){
+                                        update(user, friend, Message.SEEN);
+                                    }
                                 }
                             }
 
@@ -119,12 +126,41 @@ public class NotificationService extends Service {
         MessageDAO.getInstance().update(message);
     }
 
+    public static void update(User user, User friend, int status){
+        MessageDAO.getInstance().gets(friend).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if (message.getFriendId().equals(user.getId()) && message.isMyself()) {
+                        if (MessageActivity.inMessage) {
+                            if (message.getStatus() < status) {
+                                message.setStatus(status);
+                                MessageDAO.getInstance().update(message);
+                            }
+                        }else{
+                            if (message.getStatus() < Message.RECEIVED) {
+                                message.setStatus(Message.RECEIVED);
+                                MessageDAO.getInstance().update(message);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         user = (User) SharedPreferenceProvider.getInstance(getApplicationContext()).get("user");
-        notificationManagerCompat = NotificationManagerCompat.from(this);
-        getLastMessage();
+        UserDAO.getInstance().offline(user);
+//        notificationManagerCompat = NotificationManagerCompat.from(this);
+//        getLastMessage();
     }
 }

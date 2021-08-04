@@ -1,5 +1,6 @@
 package com.example.chatting.Model;
 
+import com.example.chatting.DAO.UserDAO;
 import com.example.chatting.Provider.DateProvider;
 
 import java.io.Serializable;
@@ -102,4 +103,5 @@ public class User implements Serializable {
     public void setState(boolean state) {
         this.state = state;
     }
+
 }

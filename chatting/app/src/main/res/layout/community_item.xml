@@ -59,7 +59,7 @@
             android:id="@+id/btn_accept"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_baseline_check_circle_24"
+            android:src="@drawable/ic_baseline_received"
             android:scaleType="centerCrop"
             android:background="#00ffffff"/>
 

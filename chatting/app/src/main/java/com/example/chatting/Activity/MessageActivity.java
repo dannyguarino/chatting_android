@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chatting.Adapter.MessageRecyclerAdapter;
 import com.example.chatting.Application.App;
@@ -32,6 +33,9 @@ import com.example.chatting.Model.User;
 import com.example.chatting.Provider.ImageConvert;
 import com.example.chatting.Provider.SharedPreferenceProvider;
 import com.example.chatting.R;
+import com.example.chatting.Service.NotificationService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -47,6 +51,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
     List<Message> messages;
     public static User user, friend;
+    public static boolean inMessage;
     Intent intent;
 
     MessageRecyclerAdapter messageRecyclerAdapter;
@@ -63,6 +68,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
+        inMessage = true;
         getModel();
         getView();
         setView();
@@ -75,7 +81,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        friend = null;
+        inMessage = false;
+//        friend = null;
     }
 
     public void getModel(){
@@ -84,6 +91,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
         intent = getIntent();
         friend = (User)intent.getSerializableExtra("friend");
+
+        NotificationService.update(user, friend, Message.SEEN);
     }
 
     public void getView(){
@@ -98,6 +107,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void setView(){
+        txt_message.requestFocus();
         ImageConvert.setUrlToImageView(img_avatar, friend.getAvatar());
         tv_name.setText(friend.getName());
         messageRecyclerAdapter = new MessageRecyclerAdapter(messages);
@@ -119,6 +129,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         switch (view.getId()){
             case R.id.btn_back:
                 finish();
+                inMessage = false;
+              //  friend = null;
                 break;
             case R.id.btn_send:
                 send();
@@ -206,7 +218,17 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     public void addMessage(String context, String type){
         Message message = new Message(user.getId(), friend.getId(), context, type, true, true);
         Message messageFriend = new Message(friend.getId(), user.getId(), context, type, false, false);
-        MessageDAO.getInstance().add(message);
+        MessageDAO.getInstance().add(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                message.setStatus(Message.SENT);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                message.setStatus(Message.UNSENT);
+            }
+        });
         MessageDAO.getInstance().add(messageFriend);
         messages.add(message);
         messageRecyclerAdapter.notifyDataSetChanged();
